@@ -1,0 +1,6 @@
+public class CipherTest {
+    public static void main(String[] args) throws exception{ 
+        CipherObj test = new CipherObj("test.txt");
+        test.encrypt();
+    }
+}

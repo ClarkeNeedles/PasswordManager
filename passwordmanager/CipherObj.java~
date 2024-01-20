@@ -1,0 +1,68 @@
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Signature;
+import java.security.PublicKey;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.io.IOException; 
+
+public class CipherObj {
+    private String file;
+    
+    //Creating a Signature object
+    private Signature sign = Signature.getInstance("SHA256withRSA");
+    
+    //Creating KeyPair generator object
+    private KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+    
+    //Initializing the key pair generator
+    keyPairGen.initialize(2048);
+    
+    //Generate the pair of keys
+    private KeyPair pair = keyPairGen.generateKeyPair();   
+    
+    //Getting the public key from the key pair
+    private PublicKey publicKey = pair.getPublic();  
+    
+    //Creating a Cipher object
+    private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+    
+    //Initializing a Cipher object
+    cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+    
+    public CipherObj(String file) {
+        this.file = file;
+    }
+    
+    public void encryptText(String file) {
+        //Add data to the cipher
+        Scanner str = new Scanner(System.in);
+        byte[] input = str.nextLine().getBytes();   
+        cipher.update(input);
+        
+        //encrypting the data
+        byte[] cipherText = cipher.doFinal();  
+        try {
+            PrintWriter fileOutput = new PrintWriter( file ); 
+            fileOutput.println(new String(cipherText, "UTF8"));
+            fileOutput.close();
+        }
+        catch ( IOException e) {
+            System.err.println( "Sorry, error with output file" );
+        }
+    }
+    public void decryptText( String file ) {
+        //Decrypting the text
+        byte[] decipheredText = cipher.doFinal(cipherText);
+        try {
+            PrintWriter fileOutput = new PrintWriter( file ); 
+            fileOutput.println(new String(decipheredText));
+            fileOutput.close();
+        }
+        catch ( IOException e) {
+            System.err.println( "Sorry, error with output file" );
+        }
+    }
+}
